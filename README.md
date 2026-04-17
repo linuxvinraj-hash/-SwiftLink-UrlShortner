@@ -47,5 +47,16 @@ Attributes:
 
 ## 🌐 Live Demo
 ShortnerUrl - https://url-short-cut.s3.ap-southeast-2.amazonaws.com/Index1.html
+
 Admin AnalyticsUrl - https://url-short-cut.s3.ap-southeast-2.amazonaws.com/admin1.html
+
+## Test Examples
+
+
+https://www.google.com/search?q=aws+lambda+url+shortener+project+step+by+step+guide
+
+https://www.youtube.com/results?search_query=aws+serverless+projects+for+beginners+2026
+
+https://en.wikipedia.org/wiki/Serverless_computing?oldid=123456789&printable=yes
+
 
