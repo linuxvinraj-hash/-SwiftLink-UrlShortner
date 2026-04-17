@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Feedback Admin Panel</title>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f7f6; margin: 0; padding: 20px; }
+        .container { max-width: 1000px; margin: auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.1); }
+        h2 { color: #232f3e; border-bottom: 2px solid #eee; padding-bottom: 10px; }
+        
+        /* Table Styling */
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th { background-color: #232f3e; color: white; text-align: left; padding: 12px; }
+        td { padding: 12px; border-bottom: 1px solid #ddd; font-size: 14px; }
+        tr:hover { background-color: #f9f9f9; }
+        
+        .refresh-btn { background: #007bff; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; float: right; }
+        .refresh-btn:hover { background: #0056b3; }
+        .status-msg { font-style: italic; color: #666; margin-top: 10px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <button class="refresh-btn" onclick="fetchFeedback()">🔄 Refresh Data</button>
+    <h2>Admin: Feedback Logs</h2>
+    <p id="status" class="status-msg">Click refresh to load data...</p>
+
+    <table id="feedbackTable">
+        <thead>
+            <tr>
+                <th>Timestamp</th>
+                <th>Name</th>
+                <th>Message</th>
+            </tr>
+        </thead>
+        <tbody id="tableBody">
+            </tbody>
+    </table>
+</div>
+
+<script>
+    const API_URL = "https://dphkf5s57d.execute-api.ap-southeast-2.amazonaws.com"; // e.g. https://abc123xyz.execute-api.ap-southeast-2.amazonaws.com
+
+    async function fetchFeedback() {
+        const status = document.getElementById('status');
+        const tableBody = document.getElementById('tableBody');
+        
+        status.innerText = "Fetching data from AWS...";
+        tableBody.innerHTML = ""; // Clear table
+
+        try {
+            const response = await fetch(`${API_URL}/admin/feedback`);
+            const data = await response.json();
+
+            if (data.length === 0) {
+                status.innerText = "No feedback entries found in DynamoDB.";
+                return;
+            }
+
+            // Sort by timestamp (newest first)
+            data.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+
+            data.forEach(item => {
+                const row = `<tr>
+                    <td>${new Date(item.timestamp).toLocaleString()}</td>
+                    <td><strong>${item.name || 'Anonymous'}</strong></td>
+                    <td>${item.message}</td>
+                </tr>`;
+                tableBody.innerHTML += row;
+            });
+
+            status.innerText = `Successfully loaded ${data.length} entries.`;
+
+        } catch (error) {
+            console.error("Error:", error);
+            status.innerText = "❌ Error fetching data. Check Console/CORS.";
+        }
+    }
+
+    // Load data automatically when page opens
+    window.onload = fetchFeedback;
+</script>
+
+</body>
+</html>
